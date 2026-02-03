@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+@config {
+  content: ["./src/**/*.{html,ts}"];
+}
