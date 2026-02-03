@@ -1,16 +1,22 @@
+export interface Foto {
+  id: number;
+  nome: string;
+  contentType: string;
+  url: string;
+}
+
 export interface Pet {
   id: number;
   nome: string;
-  especie: string;
-  idade: number;
   raca: string;
-  urlFoto?: string;
+  idade: number;
+  foto?: Foto | null;
 }
 
 export interface PetListResponse {
-  content: Pet[];
-  totalElements: number;
-  totalPages: number;
-  currentPage: number;
+  page: number;
   size: number;
+  total: number;
+  pageCount: number;
+  content: Pet[];
 }

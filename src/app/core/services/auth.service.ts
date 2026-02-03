@@ -32,13 +32,17 @@ export class AuthService {
    * Realiza login com usuário e senha
    */
   login(credentials: LoginRequest): Observable<AuthResponse> {
+    console.log('AuthService: Iniciando login...');
     return this.http.post<AuthResponse>(
       `${this.API_URL}/autenticacao/login`,
       credentials
     ).pipe(
-      tap(response => this.handleAuthResponse(response)),
+      tap(response => {
+        console.log('AuthService: Resposta de login recebida:', response);
+        this.handleAuthResponse(response);
+      }),
       catchError(error => {
-        console.error('Login failed:', error);
+        console.error('AuthService: Erro no login:', error);
         return throwError(() => error);
       })
     );
@@ -76,9 +80,12 @@ export class AuthService {
     this.refreshTokenSignal.set(null);
     this.isAuthenticatedSignal.set(false);
 
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    // Remove do localStorage (apenas no navegador)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+    }
   }
 
   /**
@@ -102,18 +109,25 @@ export class AuthService {
     const accessToken = response.access_token;
     const refreshToken = response.refreshToken;
     const user: User = {
-      username: 'user' // Pode ser adaptado se a API retornar o username
+      username: 'user'
     };
 
+    console.log('AuthService: Armazenando token:', accessToken?.substring(0, 20) + '...');
+    
     this.tokenSignal.set(accessToken);
     this.refreshTokenSignal.set(refreshToken);
     this.currentUserSignal.set(user);
     this.isAuthenticatedSignal.set(true);
 
-    // Armazena no localStorage para persistência
-    localStorage.setItem('token', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    console.log('AuthService: isAuthenticated:', this.isAuthenticatedSignal());
+    console.log('AuthService: Token armazenado:', this.tokenSignal()?.substring(0, 20) + '...');
+
+    // Armazena no localStorage para persistência (apenas no navegador)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    }
   }
 
   /**
@@ -121,7 +135,10 @@ export class AuthService {
    */
   private getTokenFromStorage(): string | null {
     try {
-      return localStorage.getItem('token');
+      if (typeof window !== 'undefined') {
+        return localStorage.getItem('token');
+      }
+      return null;
     } catch {
       return null;
     }
@@ -132,7 +149,10 @@ export class AuthService {
    */
   private getRefreshTokenFromStorage(): string | null {
     try {
-      return localStorage.getItem('refreshToken');
+      if (typeof window !== 'undefined') {
+        return localStorage.getItem('refreshToken');
+      }
+      return null;
     } catch {
       return null;
     }
@@ -143,8 +163,11 @@ export class AuthService {
    */
   private getUserFromStorage(): User | null {
     try {
-      const user = localStorage.getItem('currentUser');
-      return user ? JSON.parse(user) : null;
+      if (typeof window !== 'undefined') {
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+      }
+      return null;
     } catch {
       return null;
     }
@@ -154,15 +177,18 @@ export class AuthService {
    * Sincroniza o estado de autenticação entre abas/janelas
    */
   private syncAuthenticationState(): void {
-    window.addEventListener('storage', () => {
-      const token = this.getTokenFromStorage();
-      const refreshToken = this.getRefreshTokenFromStorage();
-      const user = this.getUserFromStorage();
+    // Apenas no navegador (não no servidor SSR)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', () => {
+        const token = this.getTokenFromStorage();
+        const refreshToken = this.getRefreshTokenFromStorage();
+        const user = this.getUserFromStorage();
 
-      this.tokenSignal.set(token);
-      this.refreshTokenSignal.set(refreshToken);
-      this.currentUserSignal.set(user);
-      this.isAuthenticatedSignal.set(!!token);
-    });
+        this.tokenSignal.set(token);
+        this.refreshTokenSignal.set(refreshToken);
+        this.currentUserSignal.set(user);
+        this.isAuthenticatedSignal.set(!!token);
+      });
+    }
   }
 }

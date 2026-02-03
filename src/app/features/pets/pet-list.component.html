@@ -1,0 +1,217 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Pets
+          </h1>
+          <p class="text-slate-500 text-sm mt-1">Descubra e acompanhe seus pets favoritos</p>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="w-full sm:w-64">
+          <div class="relative">
+            <input
+              type="search"
+              placeholder="Buscar pets..."
+              class="w-full px-4 py-3 pl-11 rounded-full border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+              [value]="searchTerm()"
+              (input)="onSearchChange($any($event.target).value)"
+            />
+            <svg style="width: 30px;" class="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Grid de Pets -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (pet of pets(); track pet.id) {
+        <article 
+          class="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105"
+          (click)="openDetails(pet)"
+        >
+          <!-- Imagem -->
+          <div class="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300">
+            @if (pet.foto?.url) {
+              <img 
+                [src]="pet.foto!.url" 
+                [alt]="pet.nome"
+                class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+              />
+            } @else {
+              <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            }
+          </div>
+
+          <!-- Informações -->
+          <div class="p-4">
+            <h3 class="text-xl font-bold text-slate-900 truncate mb-1">{{ pet.nome }}</h3>
+            <p class="text-sm text-slate-600 mb-3">{{ pet.raca }}</p>
+            
+            <div class="flex items-center justify-between text-sm text-slate-500 mb-4 pb-4 border-b border-slate-100">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                </svg>
+                {{ pet.idade }} anos
+              </span>
+            </div>
+
+            <!-- Botão Ver Detalhes -->
+            <button 
+              class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95"
+              (click)="openDetails(pet); $event.stopPropagation()"
+            >
+              Ver Detalhes
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+
+    <!-- Estado vazio -->
+    @if (pets().length === 0 && !loading()) {
+      <div class="flex flex-col items-center justify-center py-20">
+        <svg class="w-20 h-20 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+        </svg>
+        <p class="text-slate-500 text-lg font-medium">Nenhum pet encontrado</p>
+        <p class="text-slate-400 text-sm">Tente ajustar sua busca</p>
+      </div>
+    }
+
+    <!-- Paginação -->
+    @if (pets().length > 0) {
+      <div class="flex justify-center items-center gap-3 mt-12 pb-8">
+        @if (loading()) {
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+            <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+            <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+            <span class="text-slate-500 text-sm ml-2">Carregando mais...</span>
+          </div>
+        } @else if (hasMore()) {
+          <button 
+            (click)="loadMore()"
+            class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-full hover:shadow-lg transition-all duration-200 active:scale-95"
+          >
+            Carregar Mais Pets
+          </button>
+        } @else {
+          <div class="text-center">
+            <p class="text-slate-500">Você viu todos os pets! 🎉</p>
+          </div>
+        }
+      </div>
+    }
+  </main>
+
+  <!-- Modal de Detalhes -->
+  @if (selectedPet()) {
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" (click)="closeDetails()">
+      <div 
+        class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300"
+        (click)="$event.stopPropagation()"
+      >
+        <!-- Header Modal -->
+        <div class="flex justify-between items-center p-6 border-b border-slate-100">
+          <h2 class="text-2xl font-bold text-slate-900">Detalhes do Pet</h2>
+          <button 
+            (click)="closeDetails()"
+            class="p-2 hover:bg-slate-100 rounded-full transition"
+          >
+            <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Conteúdo Modal -->
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Imagem -->
+            <div class="flex flex-col gap-4">
+              <div class="h-80 bg-gradient-to-br from-slate-200 to-slate-300 rounded-2xl overflow-hidden">
+                @if (selectedPet()?.foto?.url) {
+                  <img 
+                    [src]="selectedPet()!.foto!.url" 
+                    [alt]="selectedPet()!.nome" 
+                    class="w-full h-full object-cover"
+                  />
+                } @else {
+                  <div class="w-full h-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Informações -->
+            <div class="flex flex-col justify-between">
+              <div>
+                <h3 class="text-3xl font-bold text-slate-900 mb-2">{{ selectedPet()?.nome }}</h3>
+                <div class="flex gap-2 mb-6">
+                  <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+                    Raça: {{ selectedPet()?.raca }}
+                  </span>
+                  <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold">
+                    {{ selectedPet()?.idade }} anos
+                  </span>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                    </svg>
+                    <span class="text-slate-700">
+                      <span class="font-semibold">{{ selectedPet()?.idade }}</span> 
+                      @if (selectedPet()?.idade === 1) {
+                        ano de idade
+                      } @else {
+                        anos de idade
+                      }
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botões -->
+              <div class="flex gap-3 mt-8 pt-6 border-t border-slate-100">
+                <button 
+                  (click)="closeDetails()"
+                  class="flex-1 px-4 py-3 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition"
+                >
+                  Fechar
+                </button>
+                @if (selectedPet()) {
+                  <button 
+                    (click)="goToDetailsPage(selectedPet()!)"
+                    class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all active:scale-95"
+                  >
+                    Ver Página Completa
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+

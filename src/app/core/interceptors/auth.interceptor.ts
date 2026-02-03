@@ -25,13 +25,17 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   // Adiciona o token na requisição se existir
   const token = authService.getToken();
   if (token) {
+    console.log('Interceptor: Token encontrado, anexando ao header...');
     req = addToken(req, token);
+  } else {
+    console.warn('Interceptor: Nenhum token encontrado! (Empty token!)');
   }
 
   return next(req).pipe(
     catchError(error => {
       // Se o erro for 401 e não estiver já tentando fazer refresh
       if (error instanceof HttpErrorResponse && error.status === 401) {
+        console.log('Interceptor: Erro 401 detectado, tentando refresh...');
         return handle401Error(req, next, authService);
       }
 
