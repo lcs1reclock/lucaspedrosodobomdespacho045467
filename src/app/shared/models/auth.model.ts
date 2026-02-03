@@ -1,18 +1,19 @@
 export interface AuthResponse {
-  token: string;
+  access_token: string;
   refreshToken: string;
-  expiresIn: number;
+  expires_in: number;
+  refresh_expires_in: number;
 }
 
 export interface User {
-  id: number;
-  usuario: string;
+  id?: number;
+  username?: string;
   nome?: string;
 }
 
 export interface LoginRequest {
-  usuario: string;
-  senha: string;
+  username: string;
+  password: string;
 }
 
 export interface RefreshTokenRequest {
