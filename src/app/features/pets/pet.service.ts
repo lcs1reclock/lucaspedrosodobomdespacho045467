@@ -24,4 +24,22 @@ export class PetService {
   getById(id: number): Observable<Pet> {
     return this.http.get<Pet>(`${this.API}/${id}`);
   }
+
+  create(pet: { nome: string; raca: string; idade: number }): Observable<Pet> {
+    return this.http.post<Pet>(this.API, pet);
+  }
+
+  update(id: number, pet: { nome: string; raca: string; idade: number }): Observable<Pet> {
+    return this.http.put<Pet>(`${this.API}/${id}`, pet);
+  }
+
+  uploadFoto(petId: number, file: File): Observable<Pet> {
+    const formData = new FormData();
+    formData.append('foto', file);
+    return this.http.post<Pet>(`${this.API}/${petId}/fotos`, formData);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API}/${id}`);
+  }
 }
