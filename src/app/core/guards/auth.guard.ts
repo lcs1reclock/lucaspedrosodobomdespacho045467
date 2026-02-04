@@ -32,7 +32,7 @@ export const authGuard: CanActivateFn = (
 
 /**
  * Guard que verifica se o usuário NÃO está autenticado
- * Redireciona para home se já estiver autenticado
+ * Redireciona para pets se já estiver autenticado
  */
 export const noAuthGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -45,8 +45,8 @@ export const noAuthGuard: CanActivateFn = (
     return true;
   }
 
-  // Redireciona para home se já está autenticado
-  router.navigate(['/']);
+  // Redireciona para pets se já está autenticado
+  router.navigate(['/pets']);
 
   return false;
 };

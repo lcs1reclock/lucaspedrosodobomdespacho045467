@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, User, LoginRequest } from '../../shared/models';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -10,6 +11,7 @@ import { tap, catchError } from 'rxjs/operators';
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
 
   // Signals
   private currentUserSignal = signal<User | null>(this.getUserFromStorage());
@@ -32,17 +34,17 @@ export class AuthService {
    * Realiza login com usuário e senha
    */
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    console.log('AuthService: Iniciando login...');
+    // console.log('AuthService: Iniciando login...');
     return this.http.post<AuthResponse>(
       `${this.API_URL}/autenticacao/login`,
       credentials
     ).pipe(
       tap(response => {
-        console.log('AuthService: Resposta de login recebida:', response);
+        // console.log('AuthService: Resposta de login recebida:', response);
         this.handleAuthResponse(response);
       }),
       catchError(error => {
-        console.error('AuthService: Erro no login:', error);
+        // console.error('AuthService: Erro no login:', error);
         return throwError(() => error);
       })
     );
@@ -64,7 +66,7 @@ export class AuthService {
     ).pipe(
       tap(response => this.handleAuthResponse(response)),
       catchError(error => {
-        console.error('Token refresh failed:', error);
+        // console.error('Token refresh failed:', error);
         this.logout();
         return throwError(() => error);
       })
@@ -80,12 +82,15 @@ export class AuthService {
     this.refreshTokenSignal.set(null);
     this.isAuthenticatedSignal.set(false);
 
-    // Remove do localStorage (apenas no navegador)
+    // Remove do sessionStorage (apenas no navegador)
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
+      sessionStorage.removeItem('currentUser');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('refreshToken');
     }
+
+    // Redirecionar para login
+    this.router.navigate(['/auth/login']);
   }
 
   /**
@@ -112,31 +117,32 @@ export class AuthService {
       username: 'user'
     };
 
-    console.log('AuthService: Armazenando token:', accessToken?.substring(0, 20) + '...');
+    // console.log('AuthService: Armazenando token:', accessToken?.substring(0, 20) + '...');
     
     this.tokenSignal.set(accessToken);
     this.refreshTokenSignal.set(refreshToken);
     this.currentUserSignal.set(user);
     this.isAuthenticatedSignal.set(true);
 
-    console.log('AuthService: isAuthenticated:', this.isAuthenticatedSignal());
-    console.log('AuthService: Token armazenado:', this.tokenSignal()?.substring(0, 20) + '...');
+    // console.log('AuthService: isAuthenticated:', this.isAuthenticatedSignal());
+    // console.log('AuthService: Token armazenado:', this.tokenSignal()?.substring(0, 20) + '...');
 
-    // Armazena no localStorage para persistência (apenas no navegador)
+    // Armazena no sessionStorage para persistência apenas durante a sessão do navegador
+    // sessionStorage é mais seguro que localStorage pois expira ao fechar o navegador
     if (typeof window !== 'undefined') {
-      localStorage.setItem('token', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('currentUser', JSON.stringify(user));
+      sessionStorage.setItem('token', accessToken);
+      sessionStorage.setItem('refreshToken', refreshToken);
+      sessionStorage.setItem('currentUser', JSON.stringify(user));
     }
   }
 
   /**
-   * Recupera o token do localStorage
+   * Recupera o token do sessionStorage
    */
   private getTokenFromStorage(): string | null {
     try {
       if (typeof window !== 'undefined') {
-        return localStorage.getItem('token');
+        return sessionStorage.getItem('token');
       }
       return null;
     } catch {
@@ -145,12 +151,12 @@ export class AuthService {
   }
 
   /**
-   * Recupera o refresh token do localStorage
+   * Recupera o refresh token do sessionStorage
    */
   private getRefreshTokenFromStorage(): string | null {
     try {
       if (typeof window !== 'undefined') {
-        return localStorage.getItem('refreshToken');
+        return sessionStorage.getItem('refreshToken');
       }
       return null;
     } catch {
@@ -159,12 +165,12 @@ export class AuthService {
   }
 
   /**
-   * Recupera o usuário do localStorage
+   * Recupera o usuário do sessionStorage
    */
   private getUserFromStorage(): User | null {
     try {
       if (typeof window !== 'undefined') {
-        const user = localStorage.getItem('currentUser');
+        const user = sessionStorage.getItem('currentUser');
         return user ? JSON.parse(user) : null;
       }
       return null;

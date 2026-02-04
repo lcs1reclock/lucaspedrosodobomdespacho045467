@@ -25,17 +25,17 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   // Adiciona o token na requisição se existir
   const token = authService.getToken();
   if (token) {
-    console.log('Interceptor: Token encontrado, anexando ao header...');
+    // console.log('Interceptor: Token encontrado, anexando ao header...');
     req = addToken(req, token);
   } else {
-    console.warn('Interceptor: Nenhum token encontrado! (Empty token!)');
+    // console.warn('Interceptor: Nenhum token encontrado! (Empty token!)');
   }
 
   return next(req).pipe(
     catchError(error => {
       // Se o erro for 401 e não estiver já tentando fazer refresh
       if (error instanceof HttpErrorResponse && error.status === 401) {
-        console.log('Interceptor: Erro 401 detectado, tentando refresh...');
+        // console.log('Interceptor: Erro 401 detectado, tentando refresh...');
         return handle401Error(req, next, authService);
       }
 
@@ -62,6 +62,15 @@ function handle401Error(req: HttpRequest<any>, next: HttpHandlerFn, authService:
   if (!isRefreshing) {
     isRefreshing = true;
     refreshTokenSubject.next(null);
+
+    // Verificar se há refresh token disponível antes de tentar
+    if (!authService.getRefreshToken()) {
+      // console.warn('Interceptor: Sem refresh token disponível, fazendo logout...');
+      isRefreshing = false;
+      authService.logout();
+      // Redirecionar para login será feito pelo guard
+      return throwError(() => new Error('Sessão expirada'));
+    }
 
     return authService.refreshToken().pipe(
       switchMap((response: any) => {

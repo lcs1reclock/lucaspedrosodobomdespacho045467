@@ -5,11 +5,14 @@ import { debounceTime, switchMap, catchError } from 'rxjs/operators';
 import { PetService } from './pet.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Pet } from '../../shared/models';
+import { HeaderComponent } from '../../shared/components/header/header.component';
+import { IntegerOnlyDirective } from '../../shared/directives/integer-only.directive';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-pet-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HeaderComponent, IntegerOnlyDirective],
   templateUrl: './pet-list.component.html',
   styleUrls: ['./pet-list.component.css']
 })
@@ -17,6 +20,7 @@ export class PetListComponent implements OnDestroy, OnInit {
   private petService = inject(PetService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private notificationService = inject(NotificationService);
 
   pets = signal<Pet[]>([]);
   loading = signal(false);
@@ -80,23 +84,9 @@ export class PetListComponent implements OnDestroy, OnInit {
     );
   }
 
-  ngOnInit() {    
-    //console.log('PetListComponent: ngOnInit iniciado - BROWSER LOG');
-    if (!this.authService.isAuthenticated()) {
-      //console.log('Tentando fazer login...');
-      this.authService.login({ username: 'admin', password: 'admin' }).subscribe({
-        next: (response) => {
-          //console.log('Login ok: ', response);
-          this.loadPets();
-        },
-        error: (err) => {
-          console.error('Erro no login:', err);
-        }
-      });
-    } else {
-      //console.log('Já autenticado, carregar dados ...');
-      this.loadPets();
-    }
+  ngOnInit() {
+    // Guard já garante que usuário está autenticado
+    this.loadPets();
   }
 
   onSearchChange(value: string) {
@@ -134,22 +124,10 @@ export class PetListComponent implements OnDestroy, OnInit {
         //console.log("Total pets agora:", this.pets().length, "totalPages:", this.totalPages(), "hasMore:", this.hasMore());
       },
       error: (err) => {
-        console.error('Erro ao carregar pets:', err);
+        // console.error('Erro ao carregar pets:', err);
         this.loading.set(false);
 
-        // Se erro 401, tentar login novamente
-        if (err.status === 401) {
-          console.log('Token expirado, tentando login novamente...');
-          this.authService.login({ username: 'admin', password: 'admin' }).subscribe({
-            next: (response) => {
-              console.log('Login renovado, carregando pets...');
-              this.loadPets();
-            },
-            error: (loginErr) => {
-              console.error('Falha no login renovado:', loginErr);
-            }
-          });
-        }
+        // Interceptor já trata erro 401 automaticamente
       }
     });
   }
@@ -167,13 +145,13 @@ export class PetListComponent implements OnDestroy, OnInit {
     // Buscar detalhes completos do pet incluindo informações do tutor
     this.petService.getById(pet.id).subscribe({
       next: (petDetails) => {
-        console.log('Detalhes completos do pet:', petDetails);
-        console.log('Pet tem tutores?', petDetails.tutores);
-        console.log('Tutores do pet:', JSON.stringify(petDetails.tutores, null, 2));
+        // console.log('Detalhes completos do pet:', petDetails);
+        // console.log('Pet tem tutores?', petDetails.tutores);
+        // console.log('Tutores do pet:', JSON.stringify(petDetails.tutores, null, 2));
         this.selectedPet.set(petDetails);
       },
       error: (err) => {
-        console.error('Erro ao carregar detalhes do pet:', err);
+        // console.error('Erro ao carregar detalhes do pet:', err);
         // Fallback: usar dados da lista
         this.selectedPet.set(pet);
       }
@@ -316,7 +294,7 @@ export class PetListComponent implements OnDestroy, OnInit {
     }
 
     this.createLoading.set(true);
-    console.log('Iniciando criação de pet...');
+    // console.log('Iniciando criação de pet...');
 
     // Preparar payload JSON (sem foto)
     const payload = {
@@ -330,24 +308,25 @@ export class PetListComponent implements OnDestroy, OnInit {
     this.petService.create(payload)
       .pipe(
         switchMap((createdPet) => {
-          console.log('Pet criado com sucesso:', createdPet);
+          // console.log('Pet criado com sucesso:', createdPet);
           // Se há foto, fazer upload em seguida
           if (file) {
-            console.log('Fazendo upload da foto...');
+            // console.log('Fazendo upload da foto...');
             return this.petService.uploadFoto(createdPet.id, file);
           }
           // Sem foto, retornar o pet criado
           return of(createdPet);
         }),
         catchError((error) => {
-          console.error('Erro no processo:', error);
+          // console.error('Erro no processo:', error);
           this.createLoading.set(false);
           throw error;
         })
       )
       .subscribe({
         next: (result) => {
-          console.log('Processo concluído com sucesso:', result);
+          // console.log('Processo concluído com sucesso:', result);
+          this.notificationService.success('Pet cadastrado', 'Pet cadastrado com sucesso!');
           this.createLoading.set(false);
           this.closeCreateModal();
           // Recarregar lista após criação
@@ -356,7 +335,7 @@ export class PetListComponent implements OnDestroy, OnInit {
           this.loadPets();
         },
         error: (error) => {
-          console.error('Erro final ao criar pet:', error);
+          // console.error('Erro final ao criar pet:', error);
           this.createLoading.set(false);
         }
       });
@@ -368,7 +347,7 @@ export class PetListComponent implements OnDestroy, OnInit {
     }
 
     this.editLoading.set(true);
-    console.log('Iniciando atualização de pet...');
+    // console.log('Iniciando atualização de pet...');
 
     // Preparar payload JSON (sem foto)
     const payload = {
@@ -383,24 +362,25 @@ export class PetListComponent implements OnDestroy, OnInit {
     this.petService.update(petId, payload)
       .pipe(
         switchMap((updatedPet) => {
-          console.log('Pet atualizado com sucesso:', updatedPet);
+          // console.log('Pet atualizado com sucesso:', updatedPet);
           // Se há uma nova foto (arquivo selecionado), fazer upload
           if (file) {
-            console.log('Fazendo upload da nova foto...');
+            // console.log('Fazendo upload da nova foto...');
             return this.petService.uploadFoto(petId, file);
           }
           // Sem nova foto, retornar o pet atualizado
           return of(updatedPet);
         }),
         catchError((error) => {
-          console.error('Erro no processo de atualização:', error);
+          // console.error('Erro no processo de atualização:', error);
           this.editLoading.set(false);
           throw error;
         })
       )
       .subscribe({
         next: (result) => {
-          console.log('Processo de atualização concluído:', result);
+          // console.log('Processo de atualização concluído:', result);
+          this.notificationService.success('Pet atualizado', 'Pet atualizado com sucesso!');
           this.editLoading.set(false);
           this.closeEditModal();
           // Recarregar lista após atualização
@@ -409,7 +389,7 @@ export class PetListComponent implements OnDestroy, OnInit {
           this.loadPets();
         },
         error: (error) => {
-          console.error('Erro final ao atualizar pet:', error);
+          // console.error('Erro final ao atualizar pet:', error);
           this.editLoading.set(false);
         }
       });

@@ -1,3 +1,5 @@
+<app-header></app-header>
+
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
   <!-- Header -->
   <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
@@ -73,14 +75,11 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
-            {{ tutor.telefone }}
+            {{ tutor.telefone | phone }}
           </p>
-
-          <div class="flex items-center justify-between pt-3 border-t border-slate-100">
-            <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
-              {{ tutor.pets?.length || 0 }} {{ tutor.pets?.length === 1 ? 'pet' : 'pets' }}
-            </span>
-          </div>
+          <p class="text-sm text-slate-500 truncate">
+            {{ tutor.endereco }}
+          </p>
         </div>
       </article>
     </div>
@@ -170,7 +169,7 @@
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 <span class="text-slate-700">
-                  <span class="font-semibold">Telefone:</span> {{ selectedTutor()?.telefone }}
+                  <span class="font-semibold">Telefone:</span> {{ selectedTutor()?.telefone | phone }}
                 </span>
               </div>
 
@@ -301,6 +300,7 @@
             <div>
               <label class="block text-sm font-semibold text-slate-700 mb-2">Telefone</label>
               <input type="tel" [(ngModel)]="newTutor().telefone" name="telefone" required
+                appPhoneMask
                 class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
                 placeholder="(00) 00000-0000" />
             </div>
@@ -414,6 +414,7 @@
             <div>
               <label class="block text-sm font-semibold text-slate-700 mb-2">Telefone</label>
               <input type="tel" [(ngModel)]="editTutor().telefone" name="editTelefone" required
+                appPhoneMask
                 class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition"
                 placeholder="(00) 00000-0000" />
             </div>
@@ -496,9 +497,9 @@
   <!-- Modal Vincular Pet -->
   <div *ngIf="showVincularModal()"
     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md">
-      <div class="p-6">
-        <div class="flex items-center justify-between mb-6">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="p-6 border-b border-slate-200">
+        <div class="flex items-center justify-between mb-4">
           <h2 class="text-2xl font-bold text-slate-900">Vincular Pet</h2>
           <button (click)="closeVincularModal()" class="p-2 hover:bg-slate-100 rounded-full transition">
             <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -507,28 +508,105 @@
           </button>
         </div>
 
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Selecione um Pet</label>
-            <select [(ngModel)]="petSelecionadoIdValue" [ngModelOptions]="{standalone: true}"
-              class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition">
-              <option [value]="null">-- Selecione um pet --</option>
-              <option *ngFor="let pet of petsDisponiveis()" [value]="pet.id">
-                {{ pet.nome }} ({{ pet.raca }})
-              </option>
-            </select>
-          </div>
+        <!-- Campo de busca -->
+        <div class="relative">
+          <input 
+            type="search" 
+            [(ngModel)]="petSearchTerm"
+            (ngModelChange)="onPetSearchChange($event)"
+            placeholder="Buscar por nome ou raça..."
+            class="w-full px-4 py-3 pl-11 pr-4 border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+            autofocus
+          />
+          <svg class="absolute left-3 top-3.5 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
 
-          <div class="flex gap-3 pt-4">
-            <button (click)="closeVincularModal()"
-              class="flex-1 px-4 py-3 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">
-              Cancelar
-            </button>
-            <button (click)="vincularPet()" [disabled]="!petSelecionadoIdValue"
-              class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed">
-              Vincular
-            </button>
-          </div>
+      <!-- Lista de pets com scroll -->
+      <div class="flex-1 overflow-y-auto p-6">
+        <div *ngIf="petsDisponiveisFiltrados().length === 0" class="text-center py-12">
+          <svg class="w-16 h-16 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <p class="text-slate-500 font-medium">Nenhum pet encontrado</p>
+          <p class="text-slate-400 text-sm mt-1">Tente buscar com outro termo</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button 
+            *ngFor="let pet of petsDisponiveisFiltrados(); trackBy: trackByPetId"
+            (click)="selecionarPet(pet)"
+            [class.ring-2]="petSelecionado()?.id === pet.id"
+            [class.ring-blue-500]="petSelecionado()?.id === pet.id"
+            [class.bg-blue-50]="petSelecionado()?.id === pet.id"
+            class="flex items-center gap-3 p-3 border-2 border-slate-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition text-left group"
+          >
+            <!-- Foto do pet -->
+            <div class="flex-shrink-0">
+              <img 
+                *ngIf="pet.foto?.url" 
+                [src]="pet.foto!.url" 
+                [alt]="pet.nome"
+                class="w-14 h-14 rounded-xl object-cover"
+              />
+              <div 
+                *ngIf="!pet.foto?.url"
+                class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center"
+              >
+                <svg class="w-7 h-7 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Informações -->
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-slate-900 truncate group-hover:text-blue-600 transition">
+                {{ pet.nome }}
+              </h3>
+              <p class="text-sm text-slate-600 truncate">{{ pet.raca }}</p>
+            </div>
+
+            <!-- Ícone de seleção -->
+            <div 
+              *ngIf="petSelecionado()?.id === pet.id"
+              class="flex-shrink-0 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center"
+            >
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer com botões -->
+      <div class="p-6 border-t border-slate-200 bg-slate-50">
+        <div *ngIf="petSelecionado()" class="mb-4 p-3 bg-blue-100 border border-blue-200 rounded-xl">
+          <p class="text-sm text-blue-800">
+            <span class="font-semibold">Selecionado:</span> {{ petSelecionado()!.nome }} ({{ petSelecionado()!.raca }})
+          </p>
+        </div>
+
+        <div class="flex gap-3">
+          <button 
+            (click)="closeVincularModal()"
+            class="flex-1 px-4 py-3 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-100 transition"
+          >
+            Cancelar
+          </button>
+          <button 
+            (click)="vincularPet()" 
+            [disabled]="!petSelecionadoIdValue"
+            class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-600"
+          >
+            Vincular
+          </button>
         </div>
       </div>
     </div>
@@ -551,4 +629,45 @@
       </div>
     </div>
   </button>
+</div>
+
+<!-- Modal de Confirmação para Desvincular -->
+<div *ngIf="showConfirmModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5">
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0 w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-white">Confirmar Desvinculação</h3>
+          <p class="text-red-100 text-sm mt-0.5">Esta ação não pode ser desfeita</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="px-6 py-5">
+      <p class="text-slate-700 text-base leading-relaxed">
+        Deseja realmente desvincular este pet? O pet ficará disponível para ser vinculado a outro tutor.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-slate-50 px-6 py-4 flex gap-3 justify-end">
+      <button (click)="cancelarDesvincular()"
+        class="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200">
+        Cancelar
+      </button>
+      <button (click)="confirmarDesvincular()"
+        class="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 rounded-xl hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/30 hover:shadow-red-500/40 transition-all duration-200">
+        Sim, Desvincular
+      </button>
+    </div>
+  </div>
 </div>
