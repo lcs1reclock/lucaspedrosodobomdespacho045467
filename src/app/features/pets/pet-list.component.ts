@@ -1,7 +1,6 @@
 import { Component, signal, computed, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Subject, Subscription, of } from 'rxjs';
+import { FormsModule } from '@angular/forms';import { Router } from '@angular/router';import { Subject, Subscription, of } from 'rxjs';
 import { debounceTime, switchMap, catchError } from 'rxjs/operators';
 import { PetService } from './pet.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -17,6 +16,7 @@ import { Pet } from '../../shared/models';
 export class PetListComponent implements OnDestroy, OnInit {
   private petService = inject(PetService);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   pets = signal<Pet[]>([]);
   loading = signal(false);
@@ -164,7 +164,20 @@ export class PetListComponent implements OnDestroy, OnInit {
   }
 
   openDetails(pet: Pet) {
-    this.selectedPet.set(pet);
+    // Buscar detalhes completos do pet incluindo informações do tutor
+    this.petService.getById(pet.id).subscribe({
+      next: (petDetails) => {
+        console.log('Detalhes completos do pet:', petDetails);
+        console.log('Pet tem tutores?', petDetails.tutores);
+        console.log('Tutores do pet:', JSON.stringify(petDetails.tutores, null, 2));
+        this.selectedPet.set(petDetails);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar detalhes do pet:', err);
+        // Fallback: usar dados da lista
+        this.selectedPet.set(pet);
+      }
+    });
   }
 
   closeDetails() {
@@ -400,6 +413,10 @@ export class PetListComponent implements OnDestroy, OnInit {
           this.editLoading.set(false);
         }
       });
+  }
+
+  navigateToTutores() {
+    this.router.navigate(['/tutores']);
   }
 
   ngOnDestroy(): void {

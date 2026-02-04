@@ -1,15 +1,18 @@
+import { Pet, Foto } from './pet.model';
+
 export interface Tutor {
   id: number;
   nome: string;
   telefone: string;
   endereco: string;
-  urlFoto?: string;
+  foto?: Foto | null;
+  pets?: Pet[];
 }
 
 export interface TutorListResponse {
-  content: Tutor[];
-  totalElements: number;
-  totalPages: number;
-  currentPage: number;
+  page: number;
   size: number;
+  total: number;
+  pageCount: number;
+  content: Tutor[];
 }

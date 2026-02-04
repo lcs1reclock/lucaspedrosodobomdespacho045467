@@ -13,7 +13,7 @@ export interface Pet {
   raca: string;
   idade: number;
   foto?: Foto | null;
-  tutor?: Tutor | null;
+  tutores?: Tutor[];
 }
 
 export interface PetListResponse {
