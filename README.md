@@ -262,9 +262,48 @@ Base URL: https://pet-manager-api.geia.vip
  - DELETE /v1/tutores/{tutorId}/pets/{petId}    - Desvincular pet
 
 ================================================================================
+TESTES UNITARIOS
+================================================================================
+- Para rodar os testes: $ ng test
+- Criação de 8 testes unitários para o AuthService:
+   1 - Verifica se o serviço é criado corretamente.
+   2 - Inicializa não autenticado quando não há dados no storage.
+   3 - Faz login com sucesso e armazenar tokens.
+   4 - Tentar logar com credenciais erradas.
+   5 - Renova o token com sucesso.
+   6 - Falha na renovação do token quando nenhum token estiver disponível.
+   7 - Faz logout e limpar todos os dados.
+   8 - Carrega os dados de autenticação do sessionStorage
+- Criação de 7 testes unitários para PetService:
+   1 - Verifica se o serviço é criado corretamente.
+   2 - Lista os Pets.
+   3 - Lista os Pets com filtro de nome.
+   4 - Busca um Pet por seu ID.
+   5 - Cadastro de um novo Pet.
+   6 - Atualiza um Pet existente.
+   7 - Faz upload da foto do Pet.
+- Criação de 9 testes unitários para TutorService:
+   1 - Verifica se o serviço é criado corretamente.
+   2 - Lista os Tutores.
+   3 - Busca um Tutor por seu ID.
+   4 - Cadastra um novo Tutor.
+   5 - Atualiza um Tutor existente.
+   6 - Upload da foto do Tutor.
+   7 - Vincula um Pet ao Tutor.
+   8 - Desvincula um Pet do Tutor.
+   9 - Lista os Pets vinculados ao Tutor.
+- Criação de 6 testes unitários para AuthGuard:
+   1 - Permite o acesso quando o usuário está autenticado.
+   2 - Nega o acesso e redireciona para a página de login quando o usuário não estiver autenticado.
+   3 - Redireciona com o returnUrl correto para rotas diferentes
+   4 - Permite o acesso mesmo quando o usuário não estiver autenticado.
+   5 - Nega o acesso e redireciona para pets quando o usuário está autenticado
+   6 - Redirecionar para a página Pets independentemente da rota atual quando autenticado
+
+================================================================================
 ================================================================================
 
-- Desenvolvido com Angular 21.1.2
+- Desenvolvido com Angular
 - Data: Fevereiro de 2026
 - Lucas Pedroso do Bomdespacho
 
