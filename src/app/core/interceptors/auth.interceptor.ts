@@ -22,6 +22,11 @@ const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const authService = inject(AuthService);
 
+  // Não intercepta rotas de autenticação
+  if (req.url.includes('/autenticacao/')) {
+    return next(req);
+  }
+
   // Adiciona o token na requisição se existir
   const token = authService.getToken();
   if (token) {
@@ -33,8 +38,11 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
 
   return next(req).pipe(
     catchError(error => {
-      // Se o erro for 401 e não estiver já tentando fazer refresh
-      if (error instanceof HttpErrorResponse && error.status === 401) {
+      // Se o erro for 401 e não for da rota de login/refresh
+      if (error instanceof HttpErrorResponse && 
+          error.status === 401 && 
+          !req.url.includes('/autenticacao/login') &&
+          !req.url.includes('/autenticacao/refresh')) {
         // console.log('Interceptor: Erro 401 detectado, tentando refresh...');
         return handle401Error(req, next, authService);
       }

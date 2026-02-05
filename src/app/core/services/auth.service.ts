@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { AuthResponse, User, LoginRequest } from '../../shared/models';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { tap, catchError } from 'rxjs/operators';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
 
   // Signals
   private currentUserSignal = signal<User | null>(this.getUserFromStorage());
@@ -57,6 +59,7 @@ export class AuthService {
     const refreshToken = this.refreshTokenSignal();
 
     if (!refreshToken) {
+      this.notificationService.error('Sessão Expirada', 'Faça login novamente para continuar.');
       return throwError(() => new Error('No refresh token available'));
     }
 
@@ -64,9 +67,13 @@ export class AuthService {
       `${this.API_URL}/autenticacao/refresh`,
       { refreshToken }
     ).pipe(
-      tap(response => this.handleAuthResponse(response)),
+      tap(response => {
+        this.handleAuthResponse(response);
+        this.notificationService.info('Sessão Renovada', 'Sua sessão foi renovada automaticamente.');
+      }),
       catchError(error => {
         // console.error('Token refresh failed:', error);
+        this.notificationService.error('Sessão Expirada', 'Por favor, faça login novamente.');
         this.logout();
         return throwError(() => error);
       })

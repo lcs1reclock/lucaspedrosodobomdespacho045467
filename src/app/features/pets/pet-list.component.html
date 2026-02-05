@@ -3,14 +3,14 @@
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
   <!-- Header -->
   <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
           <h1
-            class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Pets
           </h1>
-          <p class="text-slate-500 text-sm mt-1">Descubra e acompanhe seus pets favoritos</p>
+          <p class="text-slate-500 text-xs sm:text-sm mt-0.5 sm:mt-1">Descubra e acompanhe seus pets favoritos</p>
         </div>
 
         <!-- Search Bar -->
@@ -46,9 +46,9 @@
   </header>
 
   <!-- Main Content -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 lg:py-12">
     <!-- Grid de Pets -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       <article *ngFor="let pet of pets(); trackBy: trackByPetId" (click)="openDetails(pet); $event.stopPropagation()"
         class="group relative bg-white rounded-2xl overflow-hidden shadow-md transition-all duration-300">
         <!-- Imagem -->
@@ -122,28 +122,28 @@
   </main>
 
   <div *ngIf="selectedPet() !== null"
-    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
     (click)="closeDetails()">
     <div
-      class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-300"
+      class="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-300"
       (click)="$event.stopPropagation()">
 
       <!-- Header -->
-      <div class="flex justify-between items-center p-6 border-b border-slate-200">
-        <h2 class="text-2xl font-bold text-slate-900">Detalhes do Pet</h2>
-        <button (click)="closeDetails()" class="p-2 hover:bg-slate-100 rounded-full transition">
-          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="flex justify-between items-center p-4 sm:p-6 border-b border-slate-200">
+        <h2 class="text-lg sm:text-2xl font-bold text-slate-900">Detalhes do Pet</h2>
+        <button (click)="closeDetails()" class="p-1.5 sm:p-2 hover:bg-slate-100 rounded-full transition">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
       <!-- Conteúdo -->
-      <div class="p-8">
+      <div class="p-4 sm:p-8">
 
         <!-- Foto do Pet centralizada -->
-        <div class="flex justify-center mb-6">
-          <div class="w-48 h-48 rounded-3xl bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden shadow-2xl">
+        <div class="flex justify-center mb-4 sm:mb-6">
+          <div class="w-32 h-32 sm:w-48 sm:h-48 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden shadow-2xl">
             <img *ngIf="selectedPet()?.foto?.url" [src]="selectedPet()!.foto!.url" [alt]="selectedPet()!.nome"
               class="w-full h-full object-cover" />
             <div *ngIf="!selectedPet()?.foto?.url" class="w-full h-full flex items-center justify-center">
@@ -156,16 +156,16 @@
         </div>
 
         <!-- Nome e tags centralizadas -->
-        <div class="text-center mb-6">
-          <h3 class="text-4xl font-bold text-slate-900 mb-4">{{ selectedPet()?.nome }}</h3>
-          <div class="flex gap-3 justify-center flex-wrap">
-            <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+        <div class="text-center mb-4 sm:mb-6">
+          <h3 class="text-2xl sm:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">{{ selectedPet()?.nome }}</h3>
+          <div class="flex gap-2 sm:gap-3 justify-center flex-wrap">
+            <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-semibold">
               {{ selectedPet()?.raca }}
             </span>
-            <span class="px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold">
+            <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-purple-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold">
               {{ selectedPet()?.idade }} {{ selectedPet()?.idade === 1 ? 'ano' : 'anos' }}
             </span>
-            <span class="px-4 py-2 bg-slate-100 text-slate-600 rounded-full text-sm">
+            <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 text-slate-600 rounded-full text-xs sm:text-sm">
               ID #{{ selectedPet()?.id }}
             </span>
           </div>
@@ -173,10 +173,10 @@
 
         <!-- Card Tutor compacto -->
         <div *ngIf="selectedPet()?.tutores && selectedPet()?.tutores!.length > 0"
-          class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 flex items-center gap-4 max-w-md mx-auto">
+          class="mb-4 sm:mb-6 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl sm:rounded-2xl border border-blue-200 flex items-center gap-3 sm:gap-4 max-w-md mx-auto">
           <img *ngIf="selectedPet()?.tutores![0].foto?.url" [src]="selectedPet()!.tutores![0].foto!.url"
             [alt]="selectedPet()?.tutores![0].nome"
-            class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-lg flex-shrink-0">
+            class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-white shadow-lg flex-shrink-0">
           <div *ngIf="!selectedPet()?.tutores![0].foto?.url"
             class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center border-2 border-white shadow-lg flex-shrink-0">
             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,13 +228,13 @@
 
 <!-- Modal Criar Pet -->
 <div *ngIf="showCreateModal()"
-  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-    <div class="p-8">
-      <div class="flex items-center justify-between mb-6">
+  class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+    <div class="p-4 sm:p-8">
+      <div class="flex items-center justify-between mb-4 sm:mb-6">
         <h2
-          class="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent flex items-center gap-3">
-          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
           Novo Pet
@@ -246,13 +246,13 @@
         </button>
       </div>
 
-      <form (ngSubmit)="createPet()" class="space-y-6">
+      <form (ngSubmit)="createPet()" class="space-y-4 sm:space-y-6">
         <!-- Primeira linha: Nome, Raça e Idade -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6">
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">Nome do Pet</label>
             <input type="text" [(ngModel)]="newPet().nome" name="nome" required
-              class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+              class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-slate-300 rounded-lg sm:rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
               placeholder="Digite o nome do pet" />
           </div>
 
@@ -288,7 +288,7 @@
 
             <!-- Área de drag and drop -->
             <div
-              class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-green-400 transition-colors cursor-pointer"
+              class="border-2 border-dashed border-slate-300 rounded-xl p-4 sm:p-8 text-center hover:border-green-400 transition-colors cursor-pointer"
               [class.border-green-400]="isDragOverNew()" [class.bg-green-50]="isDragOverNew()"
               (dragover)="handleDragOver($event)" (dragleave)="handleDragLeave($event)" (drop)="handleDrop($event)"
               (click)="fileInputNew.click()">
@@ -312,13 +312,13 @@
           </div>
         </div>
 
-        <div class="flex gap-3 pt-6 border-t border-slate-100">
+        <div class="flex gap-2 sm:gap-3 pt-4 sm:pt-6 border-t border-slate-100">
           <button type="button" (click)="closeCreateModal()"
-            class="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">
+            class="flex-1 px-4 py-2 sm:px-6 sm:py-3 border-2 border-slate-300 text-slate-700 text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl hover:bg-slate-50 transition">
             Cancelar
           </button>
           <button type="submit" [disabled]="createLoading()"
-            class="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            class="flex-1 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
             <ng-container *ngIf="createLoading(); else createIcon">
               <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -341,16 +341,16 @@
 
 <!-- Botão FAB Flutuante -->
 <button
-  class="fixed bottom-6 right-6 z-30 w-16 h-16 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 active:scale-95 flex items-center justify-center group"
+  class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 active:scale-95 flex items-center justify-center group"
   (click)="openCreatePetModal()" title="Novo Pet">
-  <svg class="w-8 h-8 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor"
+  <svg class="w-7 h-7 sm:w-8 sm:h-8 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor"
     viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
   </svg>
 
   <!-- Tooltip -->
   <div
-    class="absolute bottom-full right-0 mb-2 px-3 py-1 bg-slate-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+    class="hidden sm:block absolute bottom-full right-0 mb-2 px-3 py-1 bg-slate-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
     Novo Pet
     <div
       class="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800">
@@ -360,13 +360,13 @@
 
 <!-- Modal Editar Pet -->
 <div *ngIf="showEditModal()"
-  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-    <div class="p-8">
-      <div class="flex items-center justify-between mb-6">
+  class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+    <div class="p-4 sm:p-8">
+      <div class="flex items-center justify-between mb-4 sm:mb-6">
         <h2
-          class="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent flex items-center gap-3">
-          <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
