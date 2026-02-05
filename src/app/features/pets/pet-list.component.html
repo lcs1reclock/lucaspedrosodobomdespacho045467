@@ -1,0 +1,474 @@
+<app-header></app-header>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div>
+          <h1
+            class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Pets
+          </h1>
+          <p class="text-slate-500 text-xs sm:text-sm mt-0.5 sm:mt-1">Descubra e acompanhe seus pets favoritos</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="w-full sm:w-64">
+          <div class="relative">
+            <input type="search" placeholder="Buscar pets..."
+              class="w-full px-4 py-3 pl-4 pr-12 rounded-full border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+              [(ngModel)]="searchValue" (ngModelChange)="onSearchChange(searchValue)"
+              (keyup.enter)="onSearchImmediate()" />
+            <button type="button" class="absolute right-3 top-3 p-1 hover:bg-slate-100 rounded-full transition"
+              (click)="onSearchImmediate()">
+              <svg class="w-5 h-5 text-slate-400 hover:text-slate-600" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegação -->
+      <div class="flex gap-2 mt-4">
+        <button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">
+          Pets
+        </button>
+        <button (click)="navigateToTutores()"
+          class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
+          Tutores
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 lg:py-12">
+    <!-- Grid de Pets -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+      <article *ngFor="let pet of pets(); trackBy: trackByPetId" (click)="openDetails(pet); $event.stopPropagation()"
+        class="group relative bg-white rounded-2xl overflow-hidden shadow-md transition-all duration-300">
+        <!-- Imagem -->
+        <div class="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300">
+          <img *ngIf="pet.foto?.url" [src]="pet.foto!.url" [alt]="pet.nome"
+            class="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
+          <div *ngIf="!pet.foto?.url"
+            class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-blue-300" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Informações -->
+        <div class="p-4">
+          <h3 class="text-xl font-bold text-slate-900 truncate mb-1">{{ pet.nome }}</h3>
+          <p class="text-sm text-slate-600 mb-3">{{ pet.raca }}</p>
+
+          <div class="flex items-center justify-between text-sm text-slate-500 mb-4 pb-4 border-b border-slate-100">
+            <span class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+              </svg>
+              {{ pet.idade }} {{ pet.idade === 1 ? 'ano' : 'anos' }}
+            </span>
+          </div>
+
+          <!-- Botão Ver Detalhes -->
+          <button
+            class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95 z-10"
+            style="pointer-events: auto;">
+            Ver Detalhes
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Estado vazio -->
+    <div *ngIf="pets().length === 0 && !loading()" class="flex flex-col items-center justify-center py-20">
+      <svg class="w-20 h-20 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M20 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+      </svg>
+      <p class="text-slate-500 text-lg font-medium">Nenhum pet encontrado</p>
+      <p class="text-slate-400 text-sm">Tente ajustar sua busca</p>
+    </div>
+
+    <!-- Paginação -->
+    <div *ngIf="pets().length > 0" class="flex justify-center items-center gap-3 mt-12 pb-8">
+      <div *ngIf="loading()" class="flex items-center gap-2">
+        <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+        <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+        <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+        <span class="text-slate-500 text-sm ml-2">Carregando mais...</span>
+      </div>
+      <div *ngIf="!loading() && hasMore()" class="text-center">
+        <button (click)="loadMore()"
+          class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-full hover:shadow-lg transition-all duration-200 active:scale-95 z-10"
+          style="pointer-events: auto;">
+          Carregar Mais Pets
+        </button>
+      </div>
+      <div *ngIf="!loading() && !hasMore()" class="text-center">
+        <p class="text-slate-500">Você viu todos os pets! 🎉</p>
+      </div>
+    </div>
+  </main>
+
+  <div *ngIf="selectedPet() !== null"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
+    (click)="closeDetails()">
+    <div
+      class="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-300"
+      (click)="$event.stopPropagation()">
+
+      <!-- Header -->
+      <div class="flex justify-between items-center p-4 sm:p-6 border-b border-slate-200">
+        <h2 class="text-lg sm:text-2xl font-bold text-slate-900">Detalhes do Pet</h2>
+        <button (click)="closeDetails()" class="p-1.5 sm:p-2 hover:bg-slate-100 rounded-full transition">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Conteúdo -->
+      <div class="p-4 sm:p-8">
+
+        <!-- Foto do Pet centralizada -->
+        <div class="flex justify-center mb-4 sm:mb-6">
+          <div class="w-32 h-32 sm:w-48 sm:h-48 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden shadow-2xl">
+            <img *ngIf="selectedPet()?.foto?.url" [src]="selectedPet()!.foto!.url" [alt]="selectedPet()!.nome"
+              class="w-full h-full object-cover" />
+            <div *ngIf="!selectedPet()?.foto?.url" class="w-full h-full flex items-center justify-center">
+              <svg class="h-24 w-24 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nome e tags centralizadas -->
+        <div class="text-center mb-4 sm:mb-6">
+          <h3 class="text-2xl sm:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">{{ selectedPet()?.nome }}</h3>
+          <div class="flex gap-2 sm:gap-3 justify-center flex-wrap">
+            <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-semibold">
+              {{ selectedPet()?.raca }}
+            </span>
+            <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-purple-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold">
+              {{ selectedPet()?.idade }} {{ selectedPet()?.idade === 1 ? 'ano' : 'anos' }}
+            </span>
+            <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 text-slate-600 rounded-full text-xs sm:text-sm">
+              ID #{{ selectedPet()?.id }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Card Tutor compacto -->
+        <div *ngIf="selectedPet()?.tutores && selectedPet()?.tutores!.length > 0"
+          class="mb-4 sm:mb-6 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl sm:rounded-2xl border border-blue-200 flex items-center gap-3 sm:gap-4 max-w-md mx-auto">
+          <img *ngIf="selectedPet()?.tutores![0].foto?.url" [src]="selectedPet()!.tutores![0].foto!.url"
+            [alt]="selectedPet()?.tutores![0].nome"
+            class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-white shadow-lg flex-shrink-0">
+          <div *ngIf="!selectedPet()?.tutores![0].foto?.url"
+            class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center border-2 border-white shadow-lg flex-shrink-0">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-0.5">Tutor</p>
+            <p class="text-base font-bold text-slate-900 truncate">{{ selectedPet()?.tutores![0].nome }}</p>
+            <p class="text-sm text-slate-600 truncate">{{ selectedPet()?.tutores![0].telefone }}</p>
+          </div>
+        </div>
+
+        <!-- Sem Tutor -->
+        <div *ngIf="!selectedPet()?.tutores || selectedPet()?.tutores!.length === 0"
+          class="mb-6 p-4 bg-yellow-50 rounded-2xl border border-yellow-200 max-w-md mx-auto">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div class="flex-1">
+              <p class="text-yellow-800 font-semibold text-sm">Sem tutor vinculado</p>
+              <p class="text-yellow-700 text-xs">Vincule na tela de Tutores</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de ação -->
+        <div class="flex gap-3 pt-2">
+          <button (click)="closeDetails()"
+            class="flex-1 px-5 py-2.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-all">
+            Fechar
+          </button>
+          <button (click)="openEditPetModal(selectedPet()!); closeDetails()"
+            class="flex-1 px-5 py-2.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Editar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Criar Pet -->
+<div *ngIf="showCreateModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+    <div class="p-4 sm:p-8">
+      <div class="flex items-center justify-between mb-4 sm:mb-6">
+        <h2
+          class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Novo Pet
+        </h2>
+        <button (click)="closeCreateModal()" class="p-2 hover:bg-slate-100 rounded-full transition">
+          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form (ngSubmit)="createPet()" class="space-y-4 sm:space-y-6">
+        <!-- Primeira linha: Nome, Raça e Idade -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Nome do Pet</label>
+            <input type="text" [(ngModel)]="newPet().nome" name="nome" required
+              class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-slate-300 rounded-lg sm:rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+              placeholder="Digite o nome do pet" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Raça</label>
+            <input type="text" [(ngModel)]="newPet().raca" name="raca" required
+              class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+              placeholder="Digite a raça" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Idade</label>
+            <input type="text" [(ngModel)]="newPet().idade" name="idade" required
+              appIntegerOnly
+              class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+              placeholder="Digite a idade" />
+          </div>
+        </div>
+
+        <!-- Segunda linha: Foto do Pet (largura total) -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Foto do Pet</label>
+          <div class="relative">
+            <!-- Preview da imagem -->
+            <div *ngIf="newPet().previewUrl" class="relative mb-4">
+              <img [src]="newPet().previewUrl" alt="Preview"
+                class="w-32 h-32 object-cover rounded-xl border-2 border-green-200 mx-auto">
+              <button type="button" (click)="removeNewPetImage()"
+                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition">
+                ×
+              </button>
+            </div>
+
+            <!-- Área de drag and drop -->
+            <div
+              class="border-2 border-dashed border-slate-300 rounded-xl p-4 sm:p-8 text-center hover:border-green-400 transition-colors cursor-pointer"
+              [class.border-green-400]="isDragOverNew()" [class.bg-green-50]="isDragOverNew()"
+              (dragover)="handleDragOver($event)" (dragleave)="handleDragLeave($event)" (drop)="handleDrop($event)"
+              (click)="fileInputNew.click()">
+              <input #fileInputNew type="file" accept="image/*" (change)="handleFileSelect($event)" class="hidden" />
+
+              <svg class="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+
+              <p class="text-slate-600 font-medium mb-1">
+                <ng-container *ngIf="isDragOverNew(); else clickToSelect">
+                  Solte a imagem aqui
+                </ng-container>
+                <ng-template #clickToSelect>
+                  Arraste uma imagem ou clique para selecionar
+                </ng-template>
+              </p>
+              <p class="text-slate-400 text-sm">PNG, JPG, JPEG até 5MB</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2 sm:gap-3 pt-4 sm:pt-6 border-t border-slate-100">
+          <button type="button" (click)="closeCreateModal()"
+            class="flex-1 px-4 py-2 sm:px-6 sm:py-3 border-2 border-slate-300 text-slate-700 text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl hover:bg-slate-50 transition">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="createLoading()"
+            class="flex-1 px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <ng-container *ngIf="createLoading(); else createIcon">
+              <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            </ng-container>
+            <ng-template #createIcon>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </ng-template>
+            Criar Pet
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Botão FAB Flutuante -->
+<button
+  class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 active:scale-95 flex items-center justify-center group"
+  (click)="openCreatePetModal()" title="Novo Pet">
+  <svg class="w-7 h-7 sm:w-8 sm:h-8 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor"
+    viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+  </svg>
+
+  <!-- Tooltip -->
+  <div
+    class="hidden sm:block absolute bottom-full right-0 mb-2 px-3 py-1 bg-slate-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+    Novo Pet
+    <div
+      class="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800">
+    </div>
+  </div>
+</button>
+
+<!-- Modal Editar Pet -->
+<div *ngIf="showEditModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+    <div class="p-4 sm:p-8">
+      <div class="flex items-center justify-between mb-4 sm:mb-6">
+        <h2
+          class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Editar Pet
+        </h2>
+        <button (click)="closeEditModal()" class="p-2 hover:bg-slate-100 rounded-full transition">
+          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form (ngSubmit)="updatePet()" class="space-y-6">
+        <!-- Primeira linha: Nome, Raça e Idade -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Nome do Pet</label>
+            <input type="text" [(ngModel)]="editPet().nome" name="editNome" required
+              class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition"
+              placeholder="Digite o nome do pet" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Raça</label>
+            <input type="text" [(ngModel)]="editPet().raca" name="editRaca" required
+              class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition"
+              placeholder="Digite a raça" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Idade</label>
+            <input type="text" [(ngModel)]="editPet().idade" name="editIdade" required
+              appIntegerOnly
+              class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition"
+              placeholder="Digite a idade" />
+          </div>
+        </div>
+
+        <!-- Segunda linha: Foto -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Foto do Pet</label>
+          <div class="relative">
+            <!-- Preview da imagem -->
+            <div *ngIf="editPet().previewUrl" class="relative mb-4">
+              <img [src]="editPet().previewUrl" alt="Preview"
+                class="w-32 h-32 object-cover rounded-xl border-2 border-amber-200 mx-auto">
+              <button type="button" (click)="removeEditPetImage()"
+                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition">
+                ×
+              </button>
+            </div>
+
+            <!-- Área de drag and drop -->
+            <div
+              class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-amber-400 transition-colors cursor-pointer"
+              [class.border-amber-400]="isDragOverEdit()" [class.bg-amber-50]="isDragOverEdit()"
+              (dragover)="handleDragOver($event, true)" (dragleave)="handleDragLeave($event, true)"
+              (drop)="handleDrop($event, true)" (click)="fileInputEdit.click()">
+              <input #fileInputEdit type="file" accept="image/*" (change)="handleFileSelect($event, true)"
+                class="hidden" />
+
+              <svg class="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+
+              <p class="text-slate-600 font-medium mb-1">
+                <ng-container *ngIf="isDragOverEdit(); else clickToSelectEdit">
+                  Solte a imagem aqui
+                </ng-container>
+                <ng-template #clickToSelectEdit>
+                  Arraste uma imagem ou clique para selecionar
+                </ng-template>
+              </p>
+              <p class="text-slate-400 text-sm">PNG, JPG, JPEG até 5MB</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-6 border-t border-slate-100">
+          <button type="button" (click)="closeEditModal()"
+            class="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="editLoading()"
+            class="flex-1 px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <ng-container *ngIf="editLoading(); else editIcon">
+              <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            </ng-container>
+            <ng-template #editIcon>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </ng-template>
+            Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
