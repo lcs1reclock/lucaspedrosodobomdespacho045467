@@ -1,6 +1,7 @@
 # lucaspedrosodobomdespacho045467
-Candidato: Lucas Pedroso do Bomdespacho
-Contrução do Projeto Front End Angular para o processo Seletivo: Engenheiro da Computação
+Candidato: Lucas Pedroso do Bomdespacho.
+
+Construção do Projeto Front End Angular para o processo Seletivo: Engenheiro da Computação
 
 ================================================================================
                             PET MANAGER
@@ -53,26 +54,22 @@ PRÉ-REQUISITOS
 
 Antes de executar o projeto, certifique-se de ter instalado:
 
-1. Node.js (versão 18 ou superior)
-   Download: https://nodejs.org/
+1. Node.js (versão 18 ou superior): Download: https://nodejs.org/
 
-2. npm (geralmente vem com o Node.js)
-   Versão recomendada: 10.9.4
+2. npm (geralmente vem com o Node.js): Versão recomendada: 10.9.4
 
-3. Angular CLI (opcional, mas recomendado)
-   Para instalar globalmente:
-   npm install -g @angular/cli
+3. Angular CLI (opcional, mas recomendado): Para instalar globalmente: $ npm install -g @angular/cli
 
 ================================================================================
 INSTALAÇÃO
 ================================================================================
 
-1. Clone ou baixe o projeto
+1. Clone ou baixe o projeto:
     $ git clone https://github.com/lcs1reclock/lucaspedrosodobomdespacho045467.git
 
-2. Abra o terminal na pasta do projeto
+2. Abra o terminal na pasta do projeto.
 
-3. Instale as dependências:
+3. Instale as dependências: 
    $ npm install
 
    Aguarde a instalação completa de todos os pacotes (pode levar alguns minutos)
@@ -81,15 +78,15 @@ INSTALAÇÃO
 EXECUTANDO O PROJETO
 ================================================================================
 
-1. No terminal, execute:
+1. No terminal, execute: 
    $ ng serve --open
 
-2. Aguarde a compilação (aproximadamente 10-30 segundos)
+2. Aguarde a compilação (aproximadamente 10-30 segundos).
 
-3. Após a compilação o site será aberto no seu navegador em:
+3. Após a compilação o site será aberto no seu navegador em: 
    http://localhost:4200
 
-4. Para parar o servidor:
+4. Para parar o servidor: 
    Pressione Ctrl+C no terminal
 
 ================================================================================
@@ -106,29 +103,29 @@ Senha: admin
 ESTRUTURA DO PROJETO
 ================================================================================
 
-src/
-├── app/
-│   ├── core/                    # Módulos principais
-│   │   ├── guards/              # Proteção de rotas (authGuard)
-│   │   ├── interceptors/        # HTTP Interceptor (JWT)
-│   │   └── services/            # Serviços principais (auth)
-│   │
-│   ├── features/                # Módulos de funcionalidades
-│   │   ├── auth/                # Autenticação (login)
-│   │   ├── pets/                # Gerenciamento de pets
-│   │   └── tutores/             # Gerenciamento de tutores
-│   │
-│   ├── shared/                  # Componentes compartilhados
-│   │   ├── components/          # Header, Notificações
-│   │   ├── directives/          # Máscaras (phone, integer)
-│   │   ├── models/              # Interfaces TypeScript
-│   │   ├── pipes/               # Pipes (phone format)
-│   │   └── services/            # NotificationService
-│   │
-│   └── environments/            # Configurações de ambiente
-│
-├── public/                      # Arquivos estáticos (favicon)
-└── styles.css                   # Estilos globais
+- src/
+- ├── app/
+- │   ├── core/                    # Módulos principais
+- │   │   ├── guards/              # Proteção de rotas (authGuard)
+- │   │   ├── interceptors/        # HTTP Interceptor (JWT)
+- │   │   └── services/            # Serviços principais (auth)
+- │   │
+- │   ├── features/                # Módulos de funcionalidades
+- │   │   ├── auth/                # Autenticação (login)
+- │   │   ├── pets/                # Gerenciamento de pets
+- │   │   └── tutores/             # Gerenciamento de tutores
+- │   │
+- │   ├── shared/                  # Componentes compartilhados
+- │   │   ├── components/          # Header, Notificações
+- │   │   ├── directives/          # Máscaras (phone, integer)
+- │   │   ├── models/              # Interfaces TypeScript
+- │   │   ├── pipes/               # Pipes (phone format)
+- │   │   └── services/            # NotificationService
+- │   │
+- │   └── environments/            # Configurações de ambiente
+- │
+- ├── public/                      # Arquivos estáticos (favicon)
+- └── styles.css                   # Estilos globais
 
 ================================================================================
 FUNCIONALIDADES DETALHADAS
@@ -230,9 +227,9 @@ OBSERVAÇÕES IMPORTANTES
 ESTRUTURA DE ROTAS
 ================================================================================
 
-/auth/login          = Tela de login (pública)
-/pets                = Lista de pets (protegida)
-/tutores             = Lista de tutores (protegida)
+- /auth/login          = Tela de login (pública)
+- /pets                = Lista de pets (protegida)
+- /tutores             = Lista de tutores (protegida)
 
 Redirecionamentos automáticos:
 - Usuário não autenticado                   = /auth/login
@@ -244,32 +241,32 @@ API ENDPOINTS UTILIZADOS
 
 Base URL: https://pet-manager-api.geia.vip
 
-Autenticação:
-POST   /v1/autenticacao/login                - Login
-PUT    /v1/autenticacao/refresh              - Refresh token
+1. Autenticação:
+ - POST   /v1/autenticacao/login                - Login
+ - PUT    /v1/autenticacao/refresh              - Refresh token
 
-Pets:
-GET    /v1/pets                              - Listar pets (paginado)
-GET    /v1/pets/{id}                         - Buscar pet por ID
-POST   /v1/pets                              - Criar pet
-PUT    /v1/pets/{id}                         - Atualizar pet
-POST   /v1/pets/{id}/foto                    - Upload foto do pet
+2. Pets:
+ - GET    /v1/pets                              - Listar pets (paginado)
+ - GET    /v1/pets/{id}                         - Buscar pet por ID
+ - POST   /v1/pets                              - Criar pet
+ - PUT    /v1/pets/{id}                         - Atualizar pet
+ - POST   /v1/pets/{id}/foto                    - Upload foto do pet
 
-Tutores:
-GET    /v1/tutores                           - Listar tutores (paginado)
-GET    /v1/tutores/{id}                      - Buscar tutor por ID
-POST   /v1/tutores                           - Criar tutor
-PUT    /v1/tutores/{id}                      - Atualizar tutor
-POST   /v1/tutores/{id}/foto                 - Upload foto do tutor
-POST   /v1/tutores/{tutorId}/pets/{petId}    - Vincular pet
-DELETE /v1/tutores/{tutorId}/pets/{petId}    - Desvincular pet
+3. Tutores:
+ - GET    /v1/tutores                           - Listar tutores (paginado)
+ - GET    /v1/tutores/{id}                      - Buscar tutor por ID
+ - POST   /v1/tutores                           - Criar tutor
+ - PUT    /v1/tutores/{id}                      - Atualizar tutor
+ - POST   /v1/tutores/{id}/foto                 - Upload foto do tutor
+ - POST   /v1/tutores/{tutorId}/pets/{petId}    - Vincular pet
+ - DELETE /v1/tutores/{tutorId}/pets/{petId}    - Desvincular pet
 
 ================================================================================
 ================================================================================
 
-Desenvolvido com Angular 21.1.2
-Data: Fevereiro de 2026
-Lucas Pedroso do Bomdespacho
+- Desenvolvido com Angular 21.1.2
+- Data: Fevereiro de 2026
+- Lucas Pedroso do Bomdespacho
 
 ================================================================================
 
